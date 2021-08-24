@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+body {
+	-webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
+	-webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
+	-webkit-user-select: none;          
+	-webkit-user-select: none;
+}
+canvas {
+    border:1px solid #d3d3d3;
+    background-color: #f1f1f1;
+}
+</style>
+</head>
+<body onload="startGame()";>
+<audio id="sJump">
+	<source src="../sounds/jump.mp3" type="audio/mp3">
+</audio>
+<audio id="sCrash">
+	<source src="../sounds/crash.mp3" type="audio/mp3">
+</audio>
+<audio id="sTheme">
+	<source src="../sounds/theme.mp3" type="audio/mp3">
+</audio>
+<audio id="sSquish">
+	<source src="../sounds/squish.mp3" type="audio/mp3">
+</audio>
+
+ver1.5
+<script>
+
+var highScore=0;
+var myGamePiece;
+var myObstacles = [];
+var myScore;
+var oMaxW=40;
+var oMinW=5;
+var oMaxH=40;
+var oMinH=5;
+var oMinSpc=50;
+var oMaxSoc=300;
+var diff=0;
+var lstDiff=0;
+
+var is_iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+var ua = navigator.userAgent.toLowerCase();
+var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
+
+//var audio = new Audio('../sounds/jump.mp3'); 
+//var audio = new Audio('../sounds/squish.mp3'); 
+//var audio = new Audio('../sounds/theme.mp3'); 
+//var audio = new Audio('../sounds/crash.mp3'); 
+
+var JUMP = document.getElementById("sJump");
+var SQUISH = document.getElementById("sSquish");
+var CRASH = document.getElementById("sCrash");
+var THEME = document.getElementById("sTheme");
+THEME.loop = true;
+
+
+
+
+if (is_iOS==true || isAndroid==true) {
+
+//document.getElementById('myBtn').addEventListener(touchEvent, startGame);
+
+	document.addEventListener('touchstart', function(e) {
+	e.preventDefault();
+	TaccelerateD();
+}, false);
+	document.addEventListener('touchend', function(e) {
+	e.preventDefault();
+	TaccelerateU();
+}, false);	
+
+}
+else
+{
+	document.addEventListener('mousedown',function()
+	{
+		accelerate('D');
+	},false);
+	document.addEventListener('mouseup',function()
+	{
+		accelerate('U');
+	},false);
+}	
+
+function startGame()
+{
+
+	THEME.play();
+	THEME.playbackRate = 0.9;
+	startGame2();
+  }
+
+
+
+function startGame2() {
+	//ctx.clearRect(0,0,1000,1000);
+	//document.getElementById("myBtn").style.visibility = "hidden";
+	myObstacles= [];
+	myGamePiece = new component(30, 30, "black", 10, 120);
+	myGamePiece.gravity = 1;
+    myScore = new component("30px", "Consolas", "black", 50, 40, "text");
+    myGameArea.start();
+}
+
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+
+		
+		diff=0;
+		lstDiff=0;
+        this.canvas.width = 480;
+        this.canvas.height = 270;
+        this.context = this.canvas.getContext("2d");
+		this.context.clearRect(0,0,1000,1000);
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+		clearInterval(this.interval );
+		myGameArea.frameNo=1;
+        this.frameNo = 0;
+		
+        this.interval = setInterval(updateGameArea, 25);
+        },
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+}
+function TaccelerateD()
+{
+	myGamePiece.squish();
+	SQUISH.play();
+}
+function TaccelerateU()
+{
+	myGamePiece.jump();
+//	sndError.play();
+	JUMP.play();
+	
+	
+	
+}
+
+function component(width, height, color, x, y, type) {
+    this.type = type;
+    this.score = 0;
+    this.width = width;
+    this.height = height;
+    this.speedX = 0;
+    this.speedY = 0;    
+    this.x = x;
+    this.y = y;
+    this.gravity = 0;
+    this.gravitySpeed = 0;
+	this.bounce = 0.3;
+	this.down=false;
+	this.up=false;
+
+    this.update = function() {
+		
+
+		
+		if(myGameArea.frameNo>2400){color = "red";diff=15;}
+		else if(myGameArea.frameNo>2100){color = "grey";diff=12;}
+		else if(myGameArea.frameNo>1800){color = "purple";diff=10;}
+		else if(myGameArea.frameNo>1500){color = "blue";diff=8;}
+		else if(myGameArea.frameNo>1200){color = "brown";diff=6;}
+		else if(myGameArea.frameNo>900){color = "green";diff=5;}
+		else if(myGameArea.frameNo>600){color = "purple";diff=3;}
+		else if(myGameArea.frameNo>300){color = "grey"; diff=2; }
+		if (lstDiff !=diff) // changed difficulty
+		{
+			lstDiff=diff;
+			clearInterval(myGameArea.interval );
+			var newInt = 25-diff;
+			myGameArea.interval = setInterval(updateGameArea, newInt);
+			THEME.playbackRate+= 0.1;
+		}
+        
+		ctx = myGameArea.context;
+        if (this.type == "text") {
+            ctx.font = this.width + " " + this.height;
+            ctx.fillStyle = color;
+            ctx.fillText(this.text, this.x, this.y);
+        } else {
+            ctx.fillStyle = color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+    }
+    this.newPos = function() {
+        this.gravitySpeed += this.gravity;
+        this.x += this.speedX;
+        this.y += this.speedY + this.gravitySpeed;
+        this.hitBottom();
+    }
+	this.squish = function() {
+
+		this.height -=10;
+		this.width +=10;
+	}
+	this.jump = function() {
+		this.height+=10;
+		this.width-=10;
+		this.speedY = -0.01;
+		this.gravitySpeed = -(this.gravitySpeed * this.bounce);
+
+	}
+    this.hitBottom = function() {
+        var rockbottom = myGameArea.canvas.height - this.height;
+        if (this.y > rockbottom) {
+            this.y = rockbottom;
+            this.gravitySpeed = 50;
+        }
+		
+    }
+    this.crashWith = function(otherobj) {
+        var myleft = this.x;
+        var myright = this.x + (this.width);
+        var mytop = this.y;
+        var mybottom = this.y + (this.height);
+        var otherleft = otherobj.x;
+        var otherright = otherobj.x + (otherobj.width);
+        var othertop = otherobj.y;
+        var otherbottom = otherobj.y + (otherobj.height);
+        var crash = true;
+        if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+            crash = false;
+        }
+        return crash;
+    }
+}
+
+function updateGameArea() {
+    var x, height, gap, minHeight, maxHeight, minGap, maxGap;
+    for (i = 0; i < myObstacles.length; i += 1) {
+        if (myGamePiece.crashWith(myObstacles[i])) {
+			THEME.pause();
+			CRASH.play();
+			var msg = "GAME OVER!";
+			if(myGameArea.frameNo > highScore)
+			{ 
+				msg +="You have a new high score of " + myGameArea.frameNo;
+				highScore = myGameArea.frameNo;
+			}
+				else
+			{
+				msg +="You scored " + myGameArea.frameNo;
+			}
+		   alert(msg);
+		   startGame();
+		   return;
+        } 
+    }
+    myGameArea.clear();
+    myGameArea.frameNo += 1;
+    if (myGameArea.frameNo == 1 || everyinterval(50)) {
+        
+	
+		x = myGameArea.canvas.width;
+        minHeight = 5;
+        maxHeight = 40;
+        height = Math.floor(Math.random()*(maxHeight-minHeight+1)+minHeight);
+        minGap = 50;
+        maxGap = 200;
+        gap = Math.floor(Math.random()*(maxGap-minGap+1)+minGap);
+		maxWidth=40;
+		minWidth=5;
+        width = Math.floor(Math.random()*(maxWidth-minWidth+1)+minWidth);
+		duck = Math.floor(Math.random() * 4) + 1;
+		if(duck!=1)
+		{
+			myObstacles.push(new component(width, height, "green", x, 270 - height));	
+		}
+		else
+		{
+			myObstacles.push(new component(width, height, "green", x, 249 - height));	
+
+		}
+    }
+    for (i = 0; i < myObstacles.length; i += 1) {
+       // myObstacles[i].x += -1;
+        myObstacles[i].x += -3.5;
+        
+		myObstacles[i].update();
+    }
+    myScore.text="SCORE: " + myGameArea.frameNo + " | HI: " + highScore;
+    // myScore.text="SCORE: " + myGamePiece.gravitySpeed;
+    
+	myScore.update();
+    myGamePiece.newPos();
+    myGamePiece.update();
+}
+
+function everyinterval(n) {
+    if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
+    return false;
+}
+
+function accelerate(n) {
+	if(n=="D")
+	{
+		myGamePiece.squish();
+		SQUISH.play();
+		}
+		else
+	{	
+	
+		myGamePiece.jump();
+		//sndError.play();
+		JUMP.play();
+	} 
+}
+</script>
+
+</body>
+</html>
