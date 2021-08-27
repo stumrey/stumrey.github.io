@@ -29,7 +29,6 @@ canvas {
 	<source src="../sounds/squish.mp3" type="audio/mp3">
 </audio>
 
-ver1.5
 <script>
 
 var highScore=0;
@@ -247,7 +246,7 @@ function updateGameArea() {
         if (myGamePiece.crashWith(myObstacles[i])) {
 			THEME.pause();
 			CRASH.play();
-			var msg = "GAME OVER!";
+			var msg = "** GAME OVER! ** ";
 			if(myGameArea.frameNo > highScore)
 			{ 
 				msg +="You have a new high score of " + myGameArea.frameNo;
@@ -334,6 +333,8 @@ function accelerate(n) {
 	} 
 }
 </script>
+<br>
+ver1.6 (C) Stu R 2021
 
 </body>
 </html>
