@@ -17,16 +17,16 @@ canvas {
 </head>
 <body onload="startGame()";>
 <audio id="sJump">
-	<source src="jump.mp3" type="audio/mp3">
+	<source src="../sounds/jump.mp3" type="audio/mp3">
 </audio>
 <audio id="sCrash">
-	<source src="crash.mp3" type="audio/mp3">
+	<source src="../sounds/crash.mp3" type="audio/mp3">
 </audio>
 <audio id="sTheme">
-	<source src="theme.mp3" type="audio/mp3">
+	<source src="../sounds/theme.mp3" type="audio/mp3">
 </audio>
 <audio id="sSquish">
-	<source src="squish.mp3" type="audio/mp3">
+	<source src="../sounds/squish.mp3" type="audio/mp3">
 </audio>
 
 ver1.5
@@ -44,6 +44,9 @@ var oMinSpc=50;
 var oMaxSoc=300;
 var diff=0;
 var lstDiff=0;
+var backGround = new Image();
+backGround.src = "../images/bg.png"; 
+var imgWidth=0;
 
 var is_iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
@@ -237,7 +240,9 @@ function component(width, height, color, x, y, type) {
 }
 
 function updateGameArea() {
-    var x, height, gap, minHeight, maxHeight, minGap, maxGap;
+    
+			
+	var x, height, gap, minHeight, maxHeight, minGap, maxGap;
     for (i = 0; i < myObstacles.length; i += 1) {
         if (myGamePiece.crashWith(myObstacles[i])) {
 			THEME.pause();
@@ -258,7 +263,19 @@ function updateGameArea() {
         } 
     }
     myGameArea.clear();
-    myGameArea.frameNo += 1;
+    myGameArea.context.drawImage(backGround,  imgWidth, 0);
+  
+    // draw image 2
+    myGameArea.context.drawImage(backGround, imgWidth + myGameArea.canvas.width,0);
+  
+    // update image height
+    imgWidth -= 1; // 1 is the scroll speed
+  
+    // reseting the images when the first image entirely exits the screen
+    if (imgWidth == -480)
+    imgWidth = 0;
+	
+	myGameArea.frameNo += 1;
     if (myGameArea.frameNo == 1 || everyinterval(50)) {
         
 	
