@@ -44,7 +44,21 @@ var oMaxSoc=300;
 var diff=0;
 var lstDiff=0;
 var backGround = new Image();
-backGround.src = "../images/bg2.png"; 
+backGround.src = "../images/bg.png"; 
+var rob1 = new Image();
+rob1.src = "../images/rob1.png"; 
+var rob2 = new Image();
+rob2.src = "../images/rob2.png"; 
+var rob3 = new Image();
+rob3.src = "../images/rob3.png"; 
+var rob4 = new Image();
+rob4.src = "../images/rob4.png"; 
+var obs = new Image();
+obs.src = "../images/obs.png"; 
+
+
+var sheet = new Image();
+sheet.src = "../images/sheet.png";
 var imgWidth=0;
 
 var is_iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -106,9 +120,9 @@ function startGame2() {
 	//ctx.clearRect(0,0,1000,1000);
 	//document.getElementById("myBtn").style.visibility = "hidden";
 	myObstacles= [];
-	myGamePiece = new component(30, 30, "black", 10, 120);
+	myGamePiece = new component(30, 30, "black", 10, 120, "char");
 	myGamePiece.gravity = 1;
-    myScore = new component("30px", "Consolas", "black", 50, 40, "text");
+    myScore = new component("30px", "Consolas", "white", 50, 40, "text");
     myGameArea.start();
 }
 
@@ -163,19 +177,24 @@ function component(width, height, color, x, y, type) {
 	this.bounce = 0.3;
 	this.down=false;
 	this.up=false;
+	this.animate = 0;
+	this.squishState = false;
 
     this.update = function() {
 		
 
 		
-		if(myGameArea.frameNo>2400){color = "red";diff=15;}
-		else if(myGameArea.frameNo>2100){color = "grey";diff=12;}
-		else if(myGameArea.frameNo>1800){color = "purple";diff=10;}
-		else if(myGameArea.frameNo>1500){color = "blue";diff=8;}
-		else if(myGameArea.frameNo>1200){color = "brown";diff=6;}
-		else if(myGameArea.frameNo>900){color = "green";diff=5;}
-		else if(myGameArea.frameNo>600){color = "purple";diff=3;}
-		else if(myGameArea.frameNo>300){color = "grey"; diff=2; }
+		
+		
+		if(myGameArea.frameNo>2400){diff=15;}
+		else if(myGameArea.frameNo>2100){diff=12;}
+		else if(myGameArea.frameNo>1800){diff=10;}
+		else if(myGameArea.frameNo>1500){diff=8;}
+		else if(myGameArea.frameNo>1200){diff=6;}
+		else if(myGameArea.frameNo>900){diff=5;}
+		else if(myGameArea.frameNo>600){diff=3;}
+		else if(myGameArea.frameNo>300){diff=2; }
+		
 		if (lstDiff !=diff) // changed difficulty
 		{
 			lstDiff=diff;
@@ -186,14 +205,48 @@ function component(width, height, color, x, y, type) {
 		}
         
 		ctx = myGameArea.context;
-        if (this.type == "text") {
+        
+		if (this.type == "text") {
             ctx.font = this.width + " " + this.height;
             ctx.fillStyle = color;
             ctx.fillText(this.text, this.x, this.y);
-        } else {
-            ctx.fillStyle = color;
-            ctx.fillRect(this.x, this.y, this.width, this.height);
-        }
+        } 
+		else 
+		{
+			if (this.type == "char")
+			{
+				this.animate++;
+				if (this.animate > 5)
+				{
+					if (this.squishState)
+					{
+						myGameArea.context.drawImage(rob3,  this.x, this.y, this.width, this.height)
+					}
+					else{
+						myGameArea.context.drawImage(rob1,  this.x, this.y, this.width, this.height)
+					}
+				}
+				else{
+					if (this.squishState)
+					{
+						myGameArea.context.drawImage(rob4,  this.x, this.y, this.width, this.height)
+					}
+					else{
+						myGameArea.context.drawImage(rob2,  this.x, this.y, this.width, this.height)
+					}
+				
+
+				}
+				if (this.animate > 10){ this.animate = 0;}  // reset the animation counter
+			}
+			else{
+		
+			// it's not text or our character so it's an obsticle 
+            //ctx.fillStyle = color;
+            //ctx.fillRect(this.x, this.y, this.width, this.height);
+				myGameArea.context.drawImage(obs,  this.x, this.y, this.width, this.height)
+			}
+        } 
     }
     this.newPos = function() {
         this.gravitySpeed += this.gravity;
@@ -205,12 +258,14 @@ function component(width, height, color, x, y, type) {
 
 		this.height -=10;
 		this.width +=10;
+		this.squishState = true;
 	}
 	this.jump = function() {
 		this.height+=10;
 		this.width-=10;
 		this.speedY = -0.01;
 		this.gravitySpeed = -(this.gravitySpeed * this.bounce);
+		this.squishState = false;
 
 	}
     this.hitBottom = function() {
@@ -334,11 +389,7 @@ function accelerate(n) {
 }
 </script>
 <br>
-<hr>
-INSTRUCTIONS: CLICK or HOLD SCREEN or MOUSE
-<hr>
-<br>
-ver1.7 (C) Stu R 2021 *** HAPPY CHRISTMAS ***
+ver1.7 (C) stu R 2023
 
 </body>
 </html>
