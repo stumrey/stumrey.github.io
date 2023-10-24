@@ -57,7 +57,20 @@ var rob4 = new Image();
 rob4.src = "cween4.png"; 
 var obs = new Image();
 obs.src = "obs.png"; 
+var home = new Image();
+home.src = "home.png"; 
 
+var assetID = "6803ed5223124890f50264b29d6da7f3";
+
+var setBaseUrl = "https://gmscoreboard-2021-backend-nodejs-9hpr6.ondigitalocean.app/api/set-score/?tagid=";
+                  https://gmscoreboard-2021-backend-nodejs-9hpr6.ondigitalocean.app
+var SETurl ="";
+
+var viewBaseUrl = "https://gmscoreboard-2021-backend-nodejs-9hpr6.ondigitalocean.app/api/get-scores/?tagid=";
+var VIEWurl = "";
+
+var vPlayer="";
+var vScore=0;
 
 var sheet = new Image();
 sheet.src = "../images/sheet.png";
@@ -107,7 +120,70 @@ else
 		accelerate('U');
 	},false);
 }	
+function mmstart()
+{
+	
+	if(!mmstart)
+	{
+		startGame();
+	}
+	
+}
 
+var userResponse="";
+function mainMenu()
+{
+	var cMenu = document.getElementById("myCanvasMenu");
+	cMenu.addEventListener('click', function() {
+		if(!mmstart)
+		{
+			mmstart=true;
+			 userResponse = prompt('Enter Your Name:');
+			const element = document.getElementById("myCanvasMenu");
+			element.remove();
+			startGame();
+		} }, false);
+	var ctx = cMenu.getContext("2d");
+
+	//ctx.clearRect(0,0,1000,1000);
+	ctx.drawImage(home,0,0)
+	
+	VIEWurl = viewBaseUrl + assetID + "&num=25";
+
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() 
+	{
+		if (this.readyState == 4 && this.status == 200) 
+		{
+			// Typical action to be performed when the document is ready:
+			// alert(xhttp.responseText);
+			var arr = JSON.parse(this.responseText);
+			var out = "";
+			var i;
+			var ypos =20;
+				
+			ctx.font = "20px Arial"
+			ctx.fillText("DUCK", 40, 150);
+			ctx.font = "20px Arial"
+			ctx.fillText("JUMP", 260, 150);
+			
+			ctx.font = "20px Arial"
+			ctx.fillText("HI SCORES", 365, 20);
+			for(i = 0; i < arr.scores.length; i++) 
+			{
+				out =  arr.scores[i].player + ' ... ' + arr.scores[i].score;
+				
+			    ypos = ypos + 20;;
+				ctx.font = "14px Arial"
+				ctx.fillText(out, 380, ypos);
+			}
+		}
+	};
+	xhttp.open("GET", VIEWurl, true);
+	xhttp.send();
+}
+
+	
 function startGame()
 {
 
@@ -313,9 +389,19 @@ function updateGameArea() {
 			{
 				msg +="You scored " + myGameArea.frameNo;
 			}
-		   alert(msg);
-		   startGame();
+		 		SETurl = setBaseUrl + assetID + "&player=" + userResponse + "&score=" + myGameArea.frameNo
+
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+       // Typical action to be performed when the document is ready:
+					   alert(msg);
+			startGame();
 		   return;
+    }
+};
+xhttp.open("GET", SETurl, false);
+xhttp.send();
         } 
     }
     myGameArea.clear();
