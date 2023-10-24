@@ -130,6 +130,8 @@ function mainMenu()
 		{
 			mmstart=true;
 			 userResponse = prompt('Enter Your Name:');
+			var tresult = userResponse.replace(/^\s+|\s+$/gm,'');
+			userResponse= tresult.substring(0,20);
 			const element = document.getElementById("myCanvasMenu");
 			element.remove();
 			startGame();
