@@ -156,20 +156,22 @@ function mainMenu()
 			var ypos =20;
 			
 			
+			
 			ctx.font = "20px Arial"
 			ctx.fillText("DUCK", 40, 150);
 			ctx.font = "20px Arial"
 			ctx.fillText("JUMP", 260, 150);
 			
-			ctx.font = "20px Arial"
+			ctx.font = "20px Courier New"
 			ctx.fillText("HI SCORES", 365, 20);
+			ctx.fillText("=========", 365, 28);
 			for(i = 0; i < arr.scores.length; i++) 
 			{
-				out =  arr.scores[i].player + ' ... ' + arr.scores[i].score;
+				out =  i+1 + ". " + arr.scores[i].player + ': ' + arr.scores[i].score;
 				
-			    ypos = ypos + 20;;
-				ctx.font = "14px Arial"
-				ctx.fillText(out, 380, ypos);
+			    ypos = ypos + 16;;
+				ctx.font = "13px Courier New"
+				ctx.fillText(out, 365, ypos);
 			}
 		}
 	};
