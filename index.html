@@ -120,16 +120,6 @@ else
 		accelerate('U');
 	},false);
 }	
-function mmstart()
-{
-	
-	if(!mmstart)
-	{
-		startGame();
-	}
-	
-}
-
 var userResponse="";
 function mainMenu()
 {
@@ -161,7 +151,8 @@ function mainMenu()
 			var out = "";
 			var i;
 			var ypos =20;
-				
+			
+			
 			ctx.font = "20px Arial"
 			ctx.fillText("DUCK", 40, 150);
 			ctx.font = "20px Arial"
@@ -181,12 +172,16 @@ function mainMenu()
 	};
 	xhttp.open("GET", VIEWurl, true);
 	xhttp.send();
-}
 
 	
+
+}
+
+
+
 function startGame()
 {
-
+	//alert(userResponse);
 	THEME.play();
 	THEME.playbackRate = 0.9;
 	startGame2();
@@ -389,7 +384,11 @@ function updateGameArea() {
 			{
 				msg +="You scored " + myGameArea.frameNo;
 			}
-		 		SETurl = setBaseUrl + assetID + "&player=" + userResponse + "&score=" + myGameArea.frameNo
+
+	
+	
+
+			SETurl = setBaseUrl + assetID + "&player=" + userResponse + "&score=" + myGameArea.frameNo
 
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
@@ -402,6 +401,7 @@ function updateGameArea() {
 };
 xhttp.open("GET", SETurl, false);
 xhttp.send();
+		  
         } 
     }
     myGameArea.clear();
@@ -476,8 +476,7 @@ function accelerate(n) {
 	} 
 }
 </script>
-	<canvas id="myCanvasMenu" width="480" height="270">
-<br>
+<canvas id="myCanvasMenu" width="480" height="270">
 <br>
 <table width="480px">
 	<tr>
@@ -487,7 +486,5 @@ function accelerate(n) {
 		<td>ver1.7 Stu R 2023</td>
 		<td>&nbsp;</td>
 </table>
-
-
 </body>
 </html>
