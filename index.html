@@ -163,15 +163,15 @@ function mainMenu()
 			ctx.fillText("JUMP", 260, 150);
 			
 			ctx.font = "20px Courier New"
-			ctx.fillText("HI SCORES", 365, 20);
-			ctx.fillText("=========", 365, 28);
+			ctx.fillText("HI SCORES", 363, 20);
+			ctx.fillText("=========", 363, 28);
 			for(i = 0; i < arr.scores.length; i++) 
 			{
-				out =  i+1 + ". " + arr.scores[i].player + ': ' + arr.scores[i].score;
+				out = arr.scores[i].player + ': ' + arr.scores[i].score;
 				
 			    ypos = ypos + 16;;
-				ctx.font = "13px Courier New"
-				ctx.fillText(out, 365, ypos);
+				ctx.font = "12px Courier New"
+				ctx.fillText(out, 362, ypos);
 			}
 		}
 	};
