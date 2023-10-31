@@ -9,7 +9,7 @@ body {
 	-webkit-user-select: none;          
 	-webkit-user-select: none;
 }
-	
+	 
 canvas {
     border:1px solid #d3d3d3;
     background-color: #f1f1f1;
@@ -233,6 +233,16 @@ function TaccelerateD()
 }
 function TaccelerateU()
 {
+	if(!mmstart)
+		{
+			mmstart=true;
+			 userResponse = prompt('Enter Your Name:');
+			var tresult = userResponse.replace(/\s/g, '');
+			userResponse = tresult.substring(0,12);
+			const element = document.getElementById("myCanvasMenu");
+			element.remove();
+			startGame();
+		}
 	myGamePiece.jump();
 //	sndError.play();
 	JUMP.play();
